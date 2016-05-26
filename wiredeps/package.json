@@ -1,0 +1,16 @@
+{
+  "name": "wiredeps",
+  "version": "1.0.0",
+  "description": "Shrinkwrap generator for linking projects",
+  "main": "generate-wiredeps.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "async": "^2.0.0-rc.5",
+    "lodash": "^4.13.1",
+    "request": "^2.72.0"
+  }
+}

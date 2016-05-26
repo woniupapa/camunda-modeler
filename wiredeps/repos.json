@@ -1,0 +1,397 @@
+[{
+  "name": "diagram-js",
+  "fullName": "bpmn-io/diagram-js"
+}, {
+  "name": "bpmn.io",
+  "fullName": "bpmn-io/bpmn.io"
+}, {
+  "name": "moddle",
+  "fullName": "bpmn-io/moddle"
+}, {
+  "name": "bpmn-js",
+  "fullName": "bpmn-io/bpmn-js"
+}, {
+  "name": "moddle-xml",
+  "fullName": "bpmn-io/moddle-xml"
+}, {
+  "name": "bpmn-miwg-test-suite",
+  "fullName": "bpmn-io/bpmn-miwg-test-suite"
+}, {
+  "name": "bpmn-js-integration",
+  "fullName": "bpmn-io/bpmn-js-integration"
+}, {
+  "name": "bpmn-moddle",
+  "fullName": "bpmn-io/bpmn-moddle"
+}, {
+  "name": "bpmn-js-examples",
+  "fullName": "bpmn-io/bpmn-js-examples"
+}, {
+  "name": "bower-bpmn-js",
+  "fullName": "bpmn-io/bower-bpmn-js"
+}, {
+  "name": "cmof-parser",
+  "fullName": "bpmn-io/cmof-parser"
+}, {
+  "name": "bower-diagram-js",
+  "fullName": "bpmn-io/bower-diagram-js"
+}, {
+  "name": "diagram-js-examples",
+  "fullName": "bpmn-io/diagram-js-examples"
+}, {
+  "name": "diagram-js-direct-editing",
+  "fullName": "bpmn-io/diagram-js-direct-editing"
+}, {
+  "name": "boilerplate-node-project",
+  "fullName": "bpmn-io/boilerplate-node-project"
+}, {
+  "name": "jasmine-test-container-support",
+  "fullName": "bpmn-io/jasmine-test-container-support"
+}, {
+  "name": "boilerplate-node-web-project",
+  "fullName": "bpmn-io/boilerplate-node-web-project"
+}, {
+  "name": "object-refs",
+  "fullName": "bpmn-io/object-refs"
+}, {
+  "name": "bpmn-js-cli",
+  "fullName": "bpmn-io/bpmn-js-cli"
+}, {
+  "name": "ids",
+  "fullName": "bpmn-io/ids"
+}, {
+  "name": "bpmn-js-seed",
+  "fullName": "bpmn-io/bpmn-js-seed"
+}, {
+  "name": "bpmn-js-diffing",
+  "fullName": "bpmn-io/bpmn-js-diffing"
+}, {
+  "name": "bpmn-js-differ",
+  "fullName": "bpmn-io/bpmn-js-differ"
+}, {
+  "name": "diagram-js-origin",
+  "fullName": "bpmn-io/diagram-js-origin"
+}, {
+  "name": "bpmn-io-chrome",
+  "fullName": "bpmn-io/bpmn-io-chrome"
+}, {
+  "name": "bpmn-js-embedded-comments",
+  "fullName": "bpmn-io/bpmn-js-embedded-comments"
+}, {
+  "name": "bpmn-font",
+  "fullName": "bpmn-io/bpmn-font"
+}, {
+  "name": "webjar-bpmn-js",
+  "fullName": "bpmn-io/webjar-bpmn-js"
+}, {
+  "name": "min-dom",
+  "fullName": "bpmn-io/min-dom"
+}, {
+  "name": "wiredeps",
+  "fullName": "bpmn-io/wiredeps"
+}, {
+  "name": "mocha-test-container-support",
+  "fullName": "bpmn-io/mocha-test-container-support"
+}, {
+  "name": "dmn-moddle",
+  "fullName": "bpmn-io/dmn-moddle"
+}, {
+  "name": "dmn-js",
+  "fullName": "bpmn-io/dmn-js"
+}, {
+  "name": "table-js",
+  "fullName": "bpmn-io/table-js"
+}, {
+  "name": "dmn-js-examples",
+  "fullName": "bpmn-io/dmn-js-examples"
+}, {
+  "name": "bpmn-js-properties-panel",
+  "fullName": "bpmn-io/bpmn-js-properties-panel"
+}, {
+  "name": "forum.bpmn.io",
+  "fullName": "bpmn-io/forum.bpmn.io"
+}, {
+  "name": "docs.bpmn.io",
+  "fullName": "bpmn-io/docs.bpmn.io"
+}, {
+  "name": "docdown",
+  "fullName": "bpmn-io/docdown"
+}, {
+  "name": "cmmn-moddle",
+  "fullName": "bpmn-io/cmmn-moddle"
+}, {
+  "name": "cmmn-js",
+  "fullName": "bpmn-io/cmmn-js"
+}, {
+  "name": "bower-cmmn-js",
+  "fullName": "bpmn-io/bower-cmmn-js"
+}, {
+  "name": "bpmn-js-nyan",
+  "fullName": "bpmn-io/bpmn-js-nyan"
+}, {
+  "name": "dmn-rule-validation",
+  "fullName": "bpmn-io/dmn-rule-validation"
+}, {
+  "name": "tasks",
+  "fullName": "bpmn-io/tasks"
+}, {
+  "name": "bpmn-questionnaire",
+  "fullName": "bpmn-io/bpmn-questionnaire"
+}, {
+  "name": "bower-dmn-js",
+  "fullName": "bpmn-io/bower-dmn-js"
+}, {
+  "name": "bpmn-questionnaire-example",
+  "fullName": "bpmn-io/bpmn-questionnaire-example"
+}, {
+  "name": "bpmn-questionnaire-builder",
+  "fullName": "bpmn-io/bpmn-questionnaire-builder"
+}, {
+  "name": "scroll-tabs",
+  "fullName": "bpmn-io/scroll-tabs"
+}, {
+  "name": "cmmn-font",
+  "fullName": "bpmn-io/cmmn-font"
+}, {
+  "name": "canvg-browser",
+  "fullName": "bpmn-io/canvg-browser"
+}, {
+  "name": "drag-tabs",
+  "fullName": "bpmn-io/drag-tabs"
+}, {
+  "name": "bpmn-js-task-priorities",
+  "fullName": "bpmn-io/bpmn-js-task-priorities"
+}, {
+  "name": "fox-engine",
+  "fullName": "camunda/fox-engine"
+}, {
+  "name": "fox-platform",
+  "fullName": "camunda/fox-platform"
+}, {
+  "name": "camunda-bpm-assert",
+  "fullName": "camunda/camunda-bpm-assert"
+}, {
+  "name": "camunda-bpm-platform",
+  "fullName": "camunda/camunda-bpm-platform"
+}, {
+  "name": "camunda-bpmn.js",
+  "fullName": "camunda/camunda-bpmn.js"
+}, {
+  "name": "bpmn-miwg-test-suite",
+  "fullName": "camunda/bpmn-miwg-test-suite"
+}, {
+  "name": "camunda-eclipse-plugin",
+  "fullName": "camunda/camunda-eclipse-plugin"
+}, {
+  "name": "camunda-archetypes",
+  "fullName": "camunda/camunda-archetypes"
+}, {
+  "name": "camunda-consulting",
+  "fullName": "camunda/camunda-consulting"
+}, {
+  "name": "camunda-bpm-examples",
+  "fullName": "camunda/camunda-bpm-examples"
+}, {
+  "name": "camunda-docs-manual",
+  "fullName": "camunda/camunda-docs-manual"
+}, {
+  "name": "camunda-bpm-php-sdk",
+  "fullName": "camunda/camunda-bpm-php-sdk"
+}, {
+  "name": "camunda-bpm-camel",
+  "fullName": "camunda/camunda-bpm-camel"
+}, {
+  "name": "docpad-plugin-links",
+  "fullName": "camunda/docpad-plugin-links"
+}, {
+  "name": "requirejs-angular-define",
+  "fullName": "camunda/requirejs-angular-define"
+}, {
+  "name": "angular-data-depend",
+  "fullName": "camunda/angular-data-depend"
+}, {
+  "name": "camunda-bpm-elasticsearch",
+  "fullName": "camunda/camunda-bpm-elasticsearch"
+}, {
+  "name": "camunda-bpm-platform-osgi",
+  "fullName": "camunda/camunda-bpm-platform-osgi"
+}, {
+  "name": "camunda-community-project-blueprint",
+  "fullName": "camunda/camunda-community-project-blueprint"
+}, {
+  "name": "camunda-bpm-vaadin",
+  "fullName": "camunda/camunda-bpm-vaadin"
+}, {
+  "name": "camunda-eclipse-standalone",
+  "fullName": "camunda/camunda-eclipse-standalone"
+}, {
+  "name": "camunda-bpmn-model",
+  "fullName": "camunda/camunda-bpmn-model"
+}, {
+  "name": "camunda-bpm-needle",
+  "fullName": "camunda/camunda-bpm-needle"
+}, {
+  "name": "camunda-bpm-jbehave",
+  "fullName": "camunda/camunda-bpm-jbehave"
+}, {
+  "name": "camunda-get-started-javaee",
+  "fullName": "camunda/camunda-get-started-javaee"
+}, {
+  "name": "camunda-get-started",
+  "fullName": "camunda/camunda-get-started"
+}, {
+  "name": "camunda-get-started-spring",
+  "fullName": "camunda/camunda-get-started-spring"
+}, {
+  "name": "camunda-grails-plugin",
+  "fullName": "camunda/camunda-grails-plugin"
+}, {
+  "name": "camunda-engine-unittest",
+  "fullName": "camunda/camunda-engine-unittest"
+}, {
+  "name": "camunda-spin",
+  "fullName": "camunda/camunda-spin"
+}, {
+  "name": "camunda-bpm-workbench",
+  "fullName": "camunda/camunda-bpm-workbench"
+}, {
+  "name": "camunda-tasklist-ui",
+  "fullName": "camunda/camunda-tasklist-ui"
+}, {
+  "name": "camunda-cmmn-model",
+  "fullName": "camunda/camunda-cmmn-model"
+}, {
+  "name": "camunda-xml-model",
+  "fullName": "camunda/camunda-xml-model"
+}, {
+  "name": "camunda-commons",
+  "fullName": "camunda/camunda-commons"
+}, {
+  "name": "docs.camunda.org-translations",
+  "fullName": "camunda/docs.camunda.org-translations"
+}, {
+  "name": "camunda-connect",
+  "fullName": "camunda/camunda-connect"
+}, {
+  "name": "camunda-release-parent",
+  "fullName": "camunda/camunda-release-parent"
+}, {
+  "name": "camunda-bpm-sdk-js",
+  "fullName": "camunda/camunda-bpm-sdk-js"
+}, {
+  "name": "camunda-bpm-webapp",
+  "fullName": "camunda/camunda-bpm-webapp"
+}, {
+  "name": "camunda-cockpit-ui",
+  "fullName": "camunda/camunda-cockpit-ui"
+}, {
+  "name": "camunda-commons-ui",
+  "fullName": "camunda/camunda-commons-ui"
+}, {
+  "name": "camunda-template-engines-jsr223",
+  "fullName": "camunda/camunda-template-engines-jsr223"
+}, {
+  "name": "camunda-admin-ui",
+  "fullName": "camunda/camunda-admin-ui"
+}, {
+  "name": "camunda-acm-plugin",
+  "fullName": "camunda/camunda-acm-plugin"
+}, {
+  "name": "camunda-casemanager-ui",
+  "fullName": "camunda/camunda-casemanager-ui"
+}, {
+  "name": "camunda-bpm-mockito",
+  "fullName": "camunda/camunda-bpm-mockito"
+}, {
+  "name": "camunda-cockpit-plugins",
+  "fullName": "camunda/camunda-cockpit-plugins"
+}, {
+  "name": "camunda-cockpit-plugin-statistics",
+  "fullName": "camunda/camunda-cockpit-plugin-statistics"
+}, {
+  "name": "camunda-cycle",
+  "fullName": "camunda/camunda-cycle"
+}, {
+  "name": "bower-camunda-bpm-sdk-js",
+  "fullName": "camunda/bower-camunda-bpm-sdk-js"
+}, {
+  "name": "camunda-tasklist-translations",
+  "fullName": "camunda/camunda-tasklist-translations"
+}, {
+  "name": "ibo-prometheus-cycle-connector",
+  "fullName": "camunda/ibo-prometheus-cycle-connector"
+}, {
+  "name": "camunda-get-started-cmmn",
+  "fullName": "camunda/camunda-get-started-cmmn"
+}, {
+  "name": "docker-camunda-bpm-platform",
+  "fullName": "camunda/docker-camunda-bpm-platform"
+}, {
+  "name": "camunda-sso-jboss",
+  "fullName": "camunda/camunda-sso-jboss"
+}, {
+  "name": "camunda-dmn-model",
+  "fullName": "camunda/camunda-dmn-model"
+}, {
+  "name": "camunda-engine-dmn",
+  "fullName": "camunda/camunda-engine-dmn"
+}, {
+  "name": "camunda-bpm-spring-boot-starter",
+  "fullName": "camunda/camunda-bpm-spring-boot-starter"
+}, {
+  "name": "camunda-engine-cassandra",
+  "fullName": "camunda/camunda-engine-cassandra"
+}, {
+  "name": "camunda-docs-theme",
+  "fullName": "camunda/camunda-docs-theme"
+}, {
+  "name": "camunda-docs-static",
+  "fullName": "camunda/camunda-docs-static"
+}, {
+  "name": "camunda-engine-hazelcast",
+  "fullName": "camunda/camunda-engine-hazelcast"
+}, {
+  "name": "bpmn-io_wp-plugin",
+  "fullName": "camunda/bpmn-io_wp-plugin"
+}, {
+  "name": "camunda-modeler",
+  "fullName": "camunda/camunda-modeler"
+}, {
+  "name": "camunda-bpm-dropwizard",
+  "fullName": "camunda/camunda-bpm-dropwizard"
+}, {
+  "name": "camunda-process-test-coverage",
+  "fullName": "camunda/camunda-process-test-coverage"
+}, {
+  "name": "camunda-process-tree-plugin",
+  "fullName": "camunda/camunda-process-tree-plugin"
+}, {
+  "name": "camunda-bpm-reactor",
+  "fullName": "camunda/camunda-bpm-reactor"
+}, {
+  "name": "blog.camunda.org",
+  "fullName": "camunda/blog.camunda.org"
+}, {
+  "name": "bpmn-for-research",
+  "fullName": "camunda/bpmn-for-research"
+}, {
+  "name": "camunda-engine-dmn-unittest",
+  "fullName": "camunda/camunda-engine-dmn-unittest"
+}, {
+  "name": "camunda-bpmn-moddle",
+  "fullName": "camunda/camunda-bpmn-moddle"
+}, {
+  "name": "camunda-get-started-dmn",
+  "fullName": "camunda/camunda-get-started-dmn"
+}, {
+  "name": "camunda-engine-dmn-benchmark",
+  "fullName": "camunda/camunda-engine-dmn-benchmark"
+}, {
+  "name": "trisotech-cycle-connector",
+  "fullName": "camunda/trisotech-cycle-connector"
+}, {
+  "name": "camunda-dmn-xlsx",
+  "fullName": "camunda/camunda-dmn-xlsx"
+}, {
+  "name": "camunda-dmn-cloud-examples",
+  "fullName": "camunda/camunda-dmn-cloud-examples"
+}]
