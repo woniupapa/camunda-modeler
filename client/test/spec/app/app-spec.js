@@ -1726,7 +1726,7 @@ describe('App', function() {
 
     describe('focus', function() {
 
-      it('should be emitted on the active tab once selected', function(done) {
+      it('should emit "focus" once the active tab is selected', function(done) {
         // when
         app._addTab(tab);
 
@@ -1742,6 +1742,29 @@ describe('App', function() {
 
         // when
         app.selectTab(tab);
+      });
+
+
+      it('should emit "focused" once the active tab is rendered', function(done) {
+
+        // when
+        app._addTab(tab);
+
+        // assume
+        expect(app.activeTab).not.to.eql(tab);
+
+        tab.on('focused', function() {
+          // then
+          expect(app.activeTab).to.eql(tab);
+
+          done();
+        });
+
+        // when
+        app.selectTab(tab);
+
+        // trigger manually -> "onRendered" hook not being triggered automatically
+        app.notifyFocusedTab();
       });
 
     });

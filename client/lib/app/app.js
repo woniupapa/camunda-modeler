@@ -183,7 +183,7 @@ function App(options) {
     var button;
 
     if (this.activeTab !== tab) {
-      return debug('Warning: state updated on incative tab! This should never happen!');
+      return debug('Warning: state updated on inactive tab! This should never happen!');
     }
 
     // update undo/redo/export based on state
@@ -243,6 +243,8 @@ function App(options) {
     this.events.emit('changed');
   });
 
+  this.events.on('app:rendered', this.compose('notifyFocusedTab'));
+
   ///////// public API yea! //////////////////////////////////////
 
   /**
@@ -281,7 +283,9 @@ module.exports = App;
 
 App.prototype.render = function() {
   var html =
-    <div className="app" onDragover={ fileDrop(this.compose('openFiles')) }>
+    <div className="app"
+         onDragover={ fileDrop(this.compose('openFiles')) }
+         onRendered={ this.events.composeEmitter('app:rendered') }>
       <MenuBar entries={ this.menuEntries } />
       <Tabbed
         className="main"
@@ -802,6 +806,26 @@ App.prototype.saveFile = function(file, saveAs, done) {
 };
 
 
+App.prototype.notifyFocusedTab = function() {
+  if (this.activeTab.__focused) {
+    return;
+  }
+
+  debug('focusing tab: %s', this.activeTab);
+
+  this.activeTab.emit('focused');
+
+  this.activeTab.__focused = true;
+};
+
+
+App.prototype.setActiveTab = function(tab) {
+  this.activeTab.__focused = false;
+
+  this.activeTab = tab;
+};
+
+
 /**
  * Select the given tab. May also be used to deselect all tabs
  * (empty selection) when passing null.
@@ -817,14 +841,13 @@ App.prototype.selectTab = function(tab) {
     throw new Error('non existing tab');
   }
 
-  this.activeTab = tab;
+  this.setActiveTab(tab);
 
   if (tab) {
     tab.emit('focus');
 
     this.recheckTabContent(tab);
   }
-
 
   this.events.emit('workspace:changed');
 

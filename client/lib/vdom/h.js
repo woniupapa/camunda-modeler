@@ -15,11 +15,13 @@ var slice = require('util/slice'),
 
 var RemoveHook = require('./hooks/remove'),
     AppendHook = require('./hooks/append'),
+    RenderedHook = require('./hooks/rendered'),
     ScrollToHook = require('./hooks/scroll-to');
 
 var HOOKS = {
   onRemove: RemoveHook,
   onAppend: AppendHook,
+  onRendered: RenderedHook,
   scrollTo: ScrollToHook
 };
 
