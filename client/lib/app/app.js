@@ -237,8 +237,16 @@ function App(options) {
 
   this.logger.on('changed', this.events.composeEmitter('changed'));
 
-  this.events.on('layout:update', newLayout => {
+  this.events.on('layout:update', (newLayout) => {
     this.layout = merge(this.layout, newLayout);
+
+    this.events.emit('changed');
+  });
+
+  this.events.on('app:fullscreen', (isFullScreen) => {
+    if (!isFullScreen && this.immersiveMode) {
+      this.immersiveMode = false;
+    }
 
     this.events.emit('changed');
   });
@@ -280,9 +288,19 @@ module.exports = App;
 
 
 App.prototype.render = function() {
+  var classes = 'app',
+      activeTabName = 'hide';
+
+  if (this.immersiveMode) {
+    classes += ' immersive-mode';
+
+    activeTabName = 'active-tab-name';
+  }
+
   var html =
-    <div className="app" onDragover={ fileDrop(this.compose('openFiles')) }>
-      <MenuBar entries={ this.menuEntries } />
+    <div className={ classes } onDragover={ fileDrop(this.compose('openFiles')) }>
+    <div className={ activeTabName }>{ this.activeTab.label }</div>
+      <MenuBar entries={ this.menuEntries } immersiveMode= { this.immersiveMode }/>
       <Tabbed
         className="main"
         tabs={ this.tabs }
@@ -477,8 +495,18 @@ App.prototype.triggerAction = function(action, options) {
     return this.exportTab(activeTab, options.type);
   }
 
+  if (action === 'immersive-mode') {
+    return this.setImmersiveMode();
+  }
+
   // forward other actions to active tab
   activeTab.triggerAction(action, options);
+};
+
+App.prototype.setImmersiveMode = function() {
+  this.immersiveMode = !this.immersiveMode;
+
+  this.events.emit('window:action', 'fullscreen');
 };
 
 

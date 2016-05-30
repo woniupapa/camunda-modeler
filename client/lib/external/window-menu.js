@@ -34,6 +34,12 @@ function WindowMenu(app) {
     app.triggerAction(action, options);
   });
 
+  app.on('window:action', function(action) {
+    debug('Sending action to menu: ' + action);
+
+    browser.send('window:trigger-action', action);
+  });
+
 }
 
 module.exports = WindowMenu;

@@ -201,7 +201,7 @@ MultiEditorTab.prototype.createEditors = function(options) {
         });
 
     var EditorComponent = definition.component;
-
+ 
     var editor = new EditorComponent(opts);
 
     if (definition.isFallback) {

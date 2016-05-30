@@ -6,7 +6,7 @@ var electron = require('electron'),
 
 var path = require('path');
 
-var Shell = require('shell');
+var Shell = electron.shell;
 
 var forEach = require('lodash/collection/forEach');
 
@@ -94,6 +94,18 @@ if (config.get('single-instance', true)) {
 }
 
 //////// client life-cycle /////////////////////////////
+
+renderer.on('window:trigger-action', function(action) {
+  var browserWindow = app.mainWindow;
+
+  if (action === 'fullscreen') {
+    if (browserWindow.isFullScreen()) {
+      return browserWindow.setFullScreen(false);
+    }
+
+    browserWindow.setFullScreen(true);
+  }
+});
 
 renderer.on('dialog:unrecognized-file', function(file, done) {
   dialog.showDialog('unrecognizedFile', { name: file.name });
@@ -307,8 +319,15 @@ app.createEditorWindow = function() {
   });
 
   mainWindow.on('focus', function() {
-    console.log('Window focused');
     renderer.send('client:window-focused');
+  });
+
+  mainWindow.on('enter-full-screen', function() {
+    renderer.send('client:fullscreen', true);
+  });
+
+  mainWindow.on('leave-full-screen', function() {
+    renderer.send('client:fullscreen', false);
   });
 
   app.emit('app:window-created', mainWindow);

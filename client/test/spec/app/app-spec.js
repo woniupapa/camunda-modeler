@@ -566,6 +566,23 @@ describe('App', function() {
   });
 
 
+  describe('immersive modeling', function() {
+
+    it('should be add class on app', function() {
+
+      // given
+      app.setImmersiveMode();
+
+      var tree = render(app);
+
+      // then
+      // expect BPMN tab with editor to be shown
+      expect(tree.properties.className).to.equal('app immersive-mode');
+    });
+
+  });
+
+
   describe('file open', function() {
 
     it('should open suitable files', function() {

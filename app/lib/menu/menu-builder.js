@@ -677,8 +677,17 @@ MenuBuilder.prototype.appendEditMenu = function() {
 };
 
 MenuBuilder.prototype.appendWindowMenu = function() {
-
   var submenu = [];
+
+  submenu.push({
+    label: 'Immersive Modeling',
+    accelerator: 'CommandOrControl+I',
+    click: function(menuItem, browserWindow) {
+      app.emit('menu:action', 'immersive-mode');
+    }
+  }, {
+    type: 'separator'
+  });
 
   if (this.opts.state.zoom) {
     submenu.push({

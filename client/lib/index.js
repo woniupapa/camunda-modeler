@@ -70,6 +70,12 @@ domReady(function() {
     app.recheckTabContent(app.activeTab);
   });
 
+  browser.on('client:fullscreen', function(e, isFullScreen) {
+    debug('fullscreen');
+
+    app.emit('app:fullscreen', isFullScreen);
+  });
+
   mainLoop(app, document.body);
 
   app.run();

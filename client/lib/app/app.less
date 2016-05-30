@@ -30,6 +30,10 @@
     }
   }
 
+  .hide {
+    display: none;
+  }
+
   .tabbed {
     .flex-container(column);
     .flex-fill(1);
@@ -47,4 +51,27 @@
     .flex-fill(initial);
   }
 
+}
+
+.app.immersive-mode {
+
+  .tabbed .tabs,
+  .footer {
+    display: none;
+  }
+
+  .tabbed.main {
+    margin: 0;
+  }
+
+  .active-tab-name {
+    position: absolute;
+    bottom: 0.5%;
+    left: 0.5%;
+    font-size: 13px;
+    opacity: 1;
+    padding: 0.5em;
+
+    z-index: 10000;
+  }
 }
