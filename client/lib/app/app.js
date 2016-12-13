@@ -36,6 +36,8 @@ var ensureOpts = require('util/ensure-opts'),
 
 var debug = require('debug')('app');
 
+var dragTabs = require('util/dom/drag-tabs');
+
 
 /**
  * The main application entry point
@@ -62,6 +64,10 @@ function App(options) {
       open: false,
       height: 150
     }
+  };
+
+  this.mainPane = {
+    tabs: []
   };
 
   var EXPORT_BUTTONS = {
@@ -159,10 +165,19 @@ function App(options) {
         MultiButton({
           id: 'export-as',
           group: 'modeler',
+          icon: 'icon-picture',
           disabled: true,
           choices: map(EXPORT_BUTTONS, function(btn) {
             return btn;
           })
+        }),
+        Separator(),
+        Button({
+          id: 'create-other-pane',
+          group: 'modeler',
+          label: 'Split Pane View',
+          icon: 'icon-size-reset',
+          action: this.compose('triggerAction', 'toggle-other-pane'),
         })
       ]
     },
@@ -236,19 +251,9 @@ function App(options) {
     }
   };
 
-  this.tabs = [
-    EmptyTab({
-      id: 'empty-tab',
-      label: '+',
-      title: 'Create new Diagram',
-      action: this.compose('triggerAction', 'create-bpmn-diagram'),
-      closable: false,
-      app: this,
-      events: this.events
-    })
-  ];
+  this.mainPane.tabs = this._initTabs('main');
 
-  this.activeTab = this.tabs[0];
+  this.activeTab = this.mainPane.activeTab = this.mainPane.tabs[0];
 
   this.fileHistory = [];
 
@@ -268,6 +273,11 @@ function App(options) {
   this.events.on('tools:state-changed', (tab, newState) => {
 
     var button;
+
+    // todo(ricardo): make it less hacky please
+    if (!contains(this[this.focusedPane + 'Pane'].tabs, tab)) {
+      return this.selectTab(tab);
+    }
 
     if (this.activeTab !== tab) {
       return debug('Warning: state updated on incative tab! This should never happen!');
@@ -313,6 +323,10 @@ function App(options) {
 
       this.updateMenuEntry('modeler', key, !enabled);
     });
+
+    if (this.otherPane) {
+      newState.splitPane = true;
+    }
 
     this.events.emit('changed');
   });
@@ -379,22 +393,51 @@ module.exports = App;
 
 
 App.prototype.render = function() {
+  var otherPane,
+      dragTabsOpts = {
+        selectors: {
+          tabsContainer: '.tabs-container',
+          tab: '.tab',
+          active: '.active',
+          ignore: '.empty'
+        }
+      };
+
+  if (this.otherPane) {
+    otherPane = (
+      <Tabbed className="other pane"
+              tabs={ this.otherPane.tabs }
+              active={ this.otherPane.activeTab }
+              pane={ 'other' }
+              isFocused={ this.focusedPane === 'other' }
+              onPositionChanged={ this.compose('dragTab')}
+              onSelect={ this.compose('selectTab') }
+              onContextMenu={ this.compose('openTabContextMenu') }
+              onClose={ this.compose('closeTab') } />
+    );
+  }
 
   var html =
-    <div className="app" onDragover={ fileDrop(this.compose('openFiles')) }>
+    <div className="app"
+         onDragover={ fileDrop(this.compose('openFiles')) }
+         drag={ dragTabs(dragTabsOpts, this.compose('dragTab')) } >
       <ModalOverlay
         isActive={ this._activeOverlay }
         content={ this._overlayContent }
         events={ this.events } />
       <MenuBar entries={ this.menuEntries } />
-      <Tabbed
-        className="main"
-        tabs={ this.tabs }
-        active={ this.activeTab }
-        onDragTab={ this.compose('shiftTab') }
-        onSelect={ this.compose('selectTab') }
-        onContextMenu={ this.compose('openTabContextMenu') }
-        onClose={ this.compose('closeTab') } />
+      <div className="panes">
+        <Tabbed
+          className="main pane"
+          tabs={ this.mainPane.tabs }
+          active={ this.mainPane.activeTab }
+          pane={ 'main' }
+          isFocused={ this.focusedPane === 'main' }
+          onSelect={ this.compose('selectTab') }
+          onContextMenu={ this.compose('openTabContextMenu') }
+          onClose={ this.compose('closeTab') } />
+        { otherPane ? otherPane : undefined }
+      </div>
       <Footer
         layout={ this.layout }
         log={ this.logger }
@@ -402,6 +445,79 @@ App.prototype.render = function() {
     </div>;
 
   return html;
+};
+
+App.prototype.dragTab = function(context) {
+  var dragTab = context.dragTab,
+      newIdx = context.newIndex,
+      tabContainer = context.tabContainer;
+
+  var pane = tabContainer.belongsToPane;
+
+  var tabs = this.getAllTabs();
+
+  var tab = find(tabs, { id: dragTab.tabId });
+
+  this.shiftTab(tab, pane, newIdx);
+};
+
+App.prototype._initTabs = function(pane) {
+  return [
+    EmptyTab({
+      id: 'empty-tab-' + pane,
+      label: '+',
+      title: 'Create new Diagram',
+      action: this.compose('triggerAction', 'create-bpmn-diagram', { pane: pane }),
+      closable: false,
+      app: this,
+      events: this.events,
+      pane: pane
+    })
+  ];
+};
+
+App.prototype.toggleOtherPane = function() {
+  var tabs;
+
+  if (!this.otherPane) {
+    tabs = this._initTabs('other');
+
+    this.otherPane = {
+      tabs: tabs,
+      activeTab: tabs[0]
+    };
+
+    this.events.emit('changed');
+
+    return;
+  }
+
+  // collect other pane tabs
+  tabs = this.otherPane.tabs;
+
+  tabs.forEach((tab) => {
+    // don't transfer empty tab
+    if (tab.id === 'empty-tab-other') {
+      return;
+    }
+
+    // pass other pane tabs to main pane
+    this.mainPane.tabs.splice(this.mainPane.tabs.length - 1, 0, tab);
+
+    this.events.emit('changed');
+  });
+
+  // delete other pane
+  delete this.otherPane;
+
+  // make sure that the other pane's empty tab is not selected
+  if (this.mainPane.tabs.length > 1 && contains(this.mainPane.tabs, this.activeTab)) {
+    this.selectTab(this.activeTab);
+  } else {
+    this.selectTab(this.mainPane.tabs[0]);
+  }
+
+  this.events.emit('changed');
 };
 
 App.prototype.openTabContextMenu = function(tab, evt) {
@@ -553,19 +669,23 @@ App.prototype.triggerAction = function(action, options) {
   }
 
   if (action === 'create-bpmn-diagram') {
-    return this.createDiagram('bpmn');
+    return this.createDiagram('bpmn', options);
   }
 
   if (action === 'create-dmn-diagram') {
-    return this.createDiagram('dmn');
+    return this.createDiagram('dmn', options);
   }
 
   if (action === 'create-dmn-table') {
-    return this.createDiagram('dmn', { isTable: true });
+    return this.createDiagram('dmn', assign({ isTable: true }, options || {}));
   }
 
   if (action === 'create-cmmn-diagram') {
-    return this.createDiagram('cmmn');
+    return this.createDiagram('cmmn', options);
+  }
+
+  if (action === 'toggle-other-pane') {
+    return this.toggleOtherPane();
   }
 
   if (action === 'open-diagram') {
@@ -629,6 +749,31 @@ App.prototype.triggerAction = function(action, options) {
 };
 
 
+App.prototype.getActivePaneTabs = function() {
+  return this.getPaneTabs(this.focusedPane);
+};
+
+
+App.prototype.getAllTabs = function() {
+
+  if (!this.otherPane) {
+    return this.mainPane.tabs;
+  }
+
+  return this.mainPane.tabs.concat(this.otherPane.tabs);
+};
+
+
+App.prototype.getPaneTabs = function(pane) {
+
+  if (pane) {
+    return this[pane + 'Pane'].tabs;
+  } else {
+    return this.mainPane.tabs;
+  }
+};
+
+
 /**
  * Create diagram of the specific type.
  *
@@ -636,11 +781,13 @@ App.prototype.triggerAction = function(action, options) {
  * @return {Tab} created diagram tab
  */
 App.prototype.createDiagram = function(type, attrs) {
+  var pane = (attrs && attrs.pane) || this.focusedPane;
+
   var tabProvider = this._findTabProvider(type);
 
   var file = tabProvider.createNewFile(attrs);
 
-  return this.openTab(file);
+  return this.openTab(file, pane);
 };
 
 
@@ -655,7 +802,9 @@ App.prototype.createDiagram = function(type, attrs) {
  * @param {Array<FileDescriptor>} files
  * @return {Array<Tab>} return the opened tabs
  */
-App.prototype.openTabs = function(files) {
+App.prototype.openTabs = function(files, pane) {
+
+  pane = pane || this.focusedPane;
 
   if (!Array.isArray(files)) {
     throw new Error('expected Array<FileDescriptor> argument');
@@ -669,7 +818,7 @@ App.prototype.openTabs = function(files) {
 
     // make sure we do not double open tabs
     // for the same file
-    return this.findTab(file) || this._createTab(file);
+    return this.findTab(file) || this._createTab(file, pane);
   });
 
   // select the last opened tab
@@ -685,8 +834,8 @@ App.prototype.openTabs = function(files) {
  * @param {FileDescriptor} file
  * @return {Tab} the opened tab
  */
-App.prototype.openTab = function(file) {
-  return this.openTabs([ file ])[0];
+App.prototype.openTab = function(file, pane) {
+  return this.openTabs([ file ], pane)[0];
 };
 
 
@@ -696,10 +845,10 @@ App.prototype.openTab = function(file) {
  *
  * @param {FileDescriptor} file
  */
-App.prototype._createTab = function(file) {
+App.prototype._createTab = function(file, pane) {
   var tabProvider = this._findTabProvider(file.fileType);
 
-  return this._addTab(tabProvider.createTab(file));
+  return this._addTab(tabProvider.createTab(file), pane);
 };
 
 
@@ -712,7 +861,9 @@ App.prototype.saveAllTabs = function() {
 
   var activeTab = this.activeTab;
 
-  series(this.tabs, (tab, done) => {
+  var tabs = this.getAllTabs();
+
+  series(tabs, (tab, done) => {
     if (!tab.save || !tab.dirty) {
       // skipping tabs that cannot save or are dirty
       return done(null);
@@ -782,12 +933,13 @@ App.prototype.exportTab = function(tab, type, done) {
  * @return {Tab}
  */
 App.prototype.findTab = function(file) {
+  var tabs = this.getAllTabs();
 
   if (isUnsaved(file)) {
     return null;
   }
 
-  return find(this.tabs, function(t) {
+  return find(tabs, function(t) {
     var tabPath = (t.file ? t.file.path : null);
     return file.path === tabPath;
   });
@@ -957,19 +1109,30 @@ App.prototype.saveFile = function(file, saveAs, done) {
  */
 App.prototype.selectTab = function(tab, evt) {
   debug('selecting tab');
+  var tabs = this.getAllTabs();
 
   // **hacky stuff** only select tab if it's done with left click
   if (evt && evt.button !== 0) {
     return;
   }
 
-  var exists = contains(this.tabs, tab);
+  var exists = contains(tabs, tab);
 
   if (tab && !exists) {
     throw new Error('non existing tab');
   }
 
   this.activeTab = tab;
+
+  if (this.otherPane && contains(this.otherPane.tabs, tab)) {
+    this.focusedPane = 'other';
+
+    this.otherPane.activeTab = tab;
+  } else {
+    this.focusedPane = 'main';
+
+    this.mainPane.activeTab = tab;
+  }
 
   if (tab) {
     tab.emit('focus');
@@ -991,7 +1154,9 @@ App.prototype.selectTab = function(tab, evt) {
  * @param  {Boolean} isNext
  */
 App.prototype._selectWithDirection = function(isNext) {
-  var nonEmptyTabs = filter(this.tabs, function(t) {
+  var tabs = this.getAllTabs();
+
+  var nonEmptyTabs = filter(tabs, function(t) {
     return !t.empty;
   });
 
@@ -1039,13 +1204,13 @@ App.prototype.closeTab = function(tab, done) {
 
   debug('close tab', tab);
 
-  var tabs = this.tabs,
+  var tabs = this.getAllTabs(),
       dialog = this.dialog,
       exists,
       file;
 
   if (typeof tab === 'string') {
-    tab = exists = find(this.tabs, { id: tab });
+    tab = exists = find(tabs, { id: tab });
   } else {
     exists = contains(tabs, tab);
   }
@@ -1109,8 +1274,10 @@ App.prototype.closeTab = function(tab, done) {
  * @param  {Function} done
  */
 App.prototype._closeTab = function(tab, done) {
-  var tabs = this.tabs,
+  var tabs = this.getActivePaneTabs(),
       events = this.events;
+
+  done = done || function() {};
 
   tab.emit('destroy');
 
@@ -1144,10 +1311,10 @@ App.prototype._closeTab = function(tab, done) {
  * @param {Tab} tab
  * @return {Tab} the added tab
  */
-App.prototype._addTab = function(tab) {
+App.prototype._addTab = function(tab, pane) {
 
-  var tabs = this.tabs,
-      events = this.events;
+  var events = this.events,
+      tabs = this.getPaneTabs(pane);
 
   // always add tab right before the EMPTY_TAB
   // TODO(vlad): make adding before empty tab more explicit
@@ -1172,8 +1339,10 @@ App.prototype.persistWorkspace = function(done) {
     activeTab: -1
   };
 
+  var tabs = this.getAllTabs();
+
   // store tabs
-  this.tabs.forEach((tab, idx) => {
+  tabs.forEach((tab, idx) => {
 
     var file = tab.file;
 
@@ -1228,6 +1397,7 @@ App.prototype.restoreWorkspace = function(done) {
 
 
   this.workspace.load(defaultWorkspace, (err, workspaceConfig) => {
+    var tabs;
 
     if (err) {
       debug('workspace load error', err);
@@ -1240,8 +1410,10 @@ App.prototype.restoreWorkspace = function(done) {
       this.openTabs(workspaceConfig.tabs);
     }
 
+    tabs = this.getAllTabs();
+
     if (workspaceConfig.activeTab && workspaceConfig.activeTab !== -1) {
-      this.activeTab = this.tabs[workspaceConfig.activeTab];
+      this.activeTab = tabs[workspaceConfig.activeTab];
     }
 
     this.events.emit('layout:update', workspaceConfig.layout);
@@ -1275,7 +1447,6 @@ App.prototype.updateMenuEntry = function(group, id, isDisabled) {
  * Start application.
  */
 App.prototype.run = function() {
-
   // initialization sequence
   //
   // (0) select empty tab
@@ -1283,7 +1454,9 @@ App.prototype.run = function() {
   // (2) restore workspace
   // (3) indicate ready
 
-  this.selectTab(this.tabs[0]);
+  var tabs = this.getAllTabs();
+
+  this.selectTab(tabs[0]);
 
   this.restoreWorkspace((err) => {
     if (err) {
@@ -1305,19 +1478,47 @@ App.prototype.run = function() {
  * @param  {Tab} tab
  * @param  {Number} newIdx
  */
-App.prototype.shiftTab = function(tab, newIdx) {
-  var tabs = this.tabs,
-      tabIdx;
+App.prototype.shiftTab = function(tab, pane, newIdx) {
+  var mainPaneTabs = this.getPaneTabs('main'),
+      fromPane,
+      otherPaneTabs,
+      tabs, tabIdx;
 
   if (!tab) {
     return;
+  }
+
+  if (this.otherPane) {
+    otherPaneTabs = this.getPaneTabs('other');
+  }
+
+  fromPane = contains(mainPaneTabs, tab) ? 'main' : 'other';
+
+  if (fromPane === 'main') {
+    tabs = mainPaneTabs;
+  } else {
+    tabs = otherPaneTabs;
   }
 
   tabIdx = tabs.indexOf(tab);
 
   tabs.splice(tabIdx, 1);
 
-  tabs.splice(newIdx, 0, tab);
+  if (pane === 'main') {
+    mainPaneTabs.splice(newIdx, 0, tab);
+
+    if (fromPane === 'other' && this.otherPane) {
+      this.otherPane.activeTab = otherPaneTabs[ tabIdx - 1 >= 0 ? tabIdx - 1 : 0 ];
+    }
+  } else {
+    otherPaneTabs.splice(newIdx, 0, tab);
+
+    if (fromPane === 'main') {
+      this.mainPane.activeTab = mainPaneTabs[ tabIdx - 1 >= 0 ? tabIdx - 1 : 0 ];
+    }
+  }
+
+  this.selectTab(tab);
 
   this.events.emit('workspace:changed');
 
@@ -1352,7 +1553,7 @@ App.prototype._closeTabs = function(tabs, cb) {
  * Closes all tabs that have external files associated with them.
  */
 App.prototype.closeAllTabs = function() {
-  var tabs = this.tabs.filter(function(tab) {
+  var tabs = this.getAllTabs().filter(function(tab) {
     return !!tab.file;
   });
 
@@ -1364,15 +1565,17 @@ App.prototype.closeAllTabs = function() {
  * Closes all tabs besides the current active one.
  */
 App.prototype.closeOtherTabs = function(tab) {
+  var tabs = this.getAllTabs();
+
   if (tab && typeof tab === 'string') {
-    tab = find(this.tabs, { id: tab });
+    tab = find(tabs, { id: tab });
   } else {
-    tab = contains(this.tabs, tab) ? tab : null;
+    tab = contains(tabs, tab) ? tab : null;
   }
 
   var openedTab = tab || this.activeTab;
 
-  var tabs = this.tabs.filter(function(tab) {
+  tabs = tabs.filter(function(tab) {
     return tab.closable && openedTab !== tab;
   });
 
@@ -1394,8 +1597,9 @@ App.prototype.reopenLastTab = function() {
  */
 App.prototype.quit = function() {
   debug('initiating application quit');
+  var tabs = this.getAllTabs();
 
-  var dirtyTabs = this.tabs.filter(function(tab) {
+  var dirtyTabs = tabs.filter(function(tab) {
     return tab.dirty;
   });
 

@@ -7,8 +7,7 @@ var h = require('vdom/h');
 var BaseComponent = require('base/component');
 
 var ensureOpts = require('util/ensure-opts'),
-    scrollTabs = require('util/dom/scroll-tabs'),
-    dragTabs = require('util/dom/drag-tabs');
+    scrollTabs = require('util/dom/scroll-tabs');
 
 var find = require('lodash/collection/find');
 
@@ -35,9 +34,10 @@ function Tabbed(options) {
 
     var onClose = options.onClose,
         onSelect = options.onSelect,
-        onDragTab = options.onDragTab,
         onContextMenu = options.onContextMenu,
+        isFocused = options.isFocused,
         tabs = options.tabs,
+        pane = options.pane,
         activeTab = options.active;
 
     var onScroll = (node) => {
@@ -48,23 +48,14 @@ function Tabbed(options) {
       }
     };
 
-    var onPositionChanged = (context) => {
-      var dragTab = context.dragTab,
-          newIdx = context.newIndex;
-
-      var tab = find(tabs, { id: dragTab.tabId });
-
-      onDragTab(tab, newIdx);
-    };
 
     var html =
       <div className={ 'tabbed ' + (options.className || '') }>
         <div className="tabs"
-             scroll={ scrollTabs(TABS_OPTS, onScroll) }
-             drag={ dragTabs(TABS_OPTS, onPositionChanged) } >
+             scroll={ scrollTabs(TABS_OPTS, onScroll) } >
           <div className="scroll-tabs-button scroll-tabs-left">‹</div>
           <div className="scroll-tabs-button scroll-tabs-right">›</div>
-          <div className="tabs-container" >
+          <div className="tabs-container" belongsToPane={ pane } >
             {
               tabs.map(tab => {
 
@@ -72,9 +63,14 @@ function Tabbed(options) {
                   throw new Error('no id specified');
                 }
 
-                var action = tab.action || onSelect.bind(null, tab);
+                var action = tab.action || onSelect.bind(null, tab),
+                    activeClassname = '';
 
-                var className = [ tab === activeTab ? 'active' : '', 'tab', tab.empty ? 'empty' : '' ].join(' ');
+                if (tab === activeTab) {
+                  activeClassname = isFocused ? 'active' : 'focused';
+                }
+
+                var className = [ activeClassname, 'tab', tab.empty ? 'empty' : '' ].join(' ');
 
                 return (
                   <div className={ className }

@@ -10,6 +10,7 @@ var ensureOpts = require('util/ensure-opts');
 
 
 function EmptyTab(options) {
+  var createOptions;
 
   if (!(this instanceof EmptyTab)) {
     return new EmptyTab(options);
@@ -17,22 +18,44 @@ function EmptyTab(options) {
 
   options = assign({ empty: true }, options);
 
+  createOptions = {
+    pane: options.pane
+  };
+
   ensureOpts([
     'app',
     'events'
   ], options);
 
+  var openContextMenu = (evt) => {
+    evt.preventDefault();
+
+    this.app.emit('context-menu:open', 'empty-tab');
+  };
+
+  var updateState = () => {
+    this.events.emit('tools:state-changed', this, {});
+  };
+
   this.render = function() {
 
     var html =
-      <div className="empty-tab">
+      <div className="empty-tab"
+           onClick={ updateState }
+           onContextmenu={ openContextMenu }>
         <p className="buttons-create">
           <span>Create a </span>
-          <button onClick={ this.app.compose('triggerAction', 'create-bpmn-diagram') }>BPMN diagram</button>
+          <button onClick={ this.app.compose('triggerAction', 'create-bpmn-diagram', createOptions) }>
+            BPMN diagram
+          </button>
           <span> or </span>
-          <button onClick={ this.app.compose('triggerAction', 'create-dmn-diagram') }>DMN diagram</button>
+          <button onClick={ this.app.compose('triggerAction', 'create-dmn-diagram', createOptions) }>
+            DMN diagram
+          </button>
           <span> or </span>
-          <button onClick={ this.app.compose('triggerAction', 'create-cmmn-diagram') }>CMMN diagram</button>
+          <button onClick={ this.app.compose('triggerAction', 'create-cmmn-diagram', createOptions) }>
+            CMMN diagram
+          </button>
         </p>
       </div>;
 
@@ -41,9 +64,7 @@ function EmptyTab(options) {
 
   Tab.call(this, options);
 
-  this.on('focus', () => {
-    this.events.emit('tools:state-changed', this, {});
-  });
+  this.on('focus', () => updateState);
 }
 
 inherits(EmptyTab, Tab);

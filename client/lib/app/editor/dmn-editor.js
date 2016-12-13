@@ -41,6 +41,12 @@ function DmnEditor(options) {
   });
 
   this._stackIdx = -1;
+
+  this.openContextMenu = function(evt) {
+    evt.preventDefault();
+
+    this.emit('context-menu:open', 'dmn');
+  };
 }
 
 inherits(DmnEditor, DiagramEditor);
@@ -320,7 +326,10 @@ DmnEditor.prototype.render = function() {
   var warnings = getWarnings(this.lastImport);
 
   return (
-    <div className="dmn-editor" key={ this.id }>
+    <div className="dmn-editor"
+         key={ this.id }
+         onFocusin={ this.compose('updateState') }
+         onContextmenu={ this.compose('openContextMenu') }>
       <div className="editor-container"
            onAppend={ this.compose('mountEditor') }
            onRemove={ this.compose('unmountEditor') }>

@@ -58,6 +58,12 @@ function CmmnEditor(options) {
 
   // elements to insert modeler and properties panel into
   this.$propertiesEl = domify('<div class="properties-parent"></div>');
+
+  this.openContextMenu = function(evt) {
+    evt.preventDefault();
+
+    this.emit('context-menu:open', 'cmmn');
+  };
 }
 
 inherits(CmmnEditor, DiagramEditor);
@@ -346,7 +352,8 @@ CmmnEditor.prototype.render = function() {
   return (
     <div className="cmmn-editor"
          key={ this.id + '#cmmn' }
-         onFocusin={ this.compose('updateState') }>
+         onFocusin={ this.compose('updateState') }
+         onContextmenu={ this.compose('openContextMenu') }>
       <div className="editor-container"
            onAppend={ this.compose('mountEditor') }
            onRemove={ this.compose('unmountEditor') }>

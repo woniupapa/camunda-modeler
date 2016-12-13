@@ -33,7 +33,8 @@ function MenuBuilder(opts) {
       dmnClauseEditingfalse: false,
       exportAs: false,
       development: app.developmentMode,
-      devtools: false
+      devtools: false,
+      splitPane: false
     }
   }, opts);
 
@@ -1111,9 +1112,36 @@ MenuBuilder.prototype.appendContextCloseTab = function(attrs) {
   return this;
 };
 
+MenuBuilder.prototype.appendPaneControl = function() {
+  if (this.opts.state.splitPane) {
+    this.menu.append(new MenuItem({
+      label: 'Close Pane',
+      click: function() {
+        app.emit('menu:action', 'toggle-other-pane');
+      }
+    }));
+  } else {
+    this.menu.append(new MenuItem({
+      label: 'Split Pane',
+      click: function() {
+        app.emit('menu:action', 'toggle-other-pane');
+      }
+    }));
+  }
+
+  return this;
+};
+
+
 MenuBuilder.prototype.buildContextMenu = function(type, attrs) {
   if (type === 'bpmn') {
-    return this.appendCopyPaste();
+    return this.appendCopyPaste()
+               .appendSeparator()
+               .appendPaneControl();
+  }
+
+  if (type === 'dmn' || type === 'cmmn' || type === 'empty-tab') {
+    return this.appendPaneControl();
   }
 
   if (type === 'tab') {

@@ -31,16 +31,23 @@
     }
   }
 
-  .tabbed {
-    .flex-container(column);
-    .flex-fill(1);
+  .panes {
+    height: 100%;
 
-    > .content {
-      height: 100%;
-      justify-content: center;
+    .flex-container(row);
+    .flex-fill(initial);
 
+    .pane, .tabbed {
       .flex-container(column);
       .flex-fill(1);
+
+      > .content {
+        height: 100%;
+        justify-content: center;
+
+        .flex-container(column);
+        .flex-fill(1);
+      }
     }
   }
 
