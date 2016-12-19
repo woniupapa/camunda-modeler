@@ -38,6 +38,7 @@ function Tabbed(options) {
         isFocused = options.isFocused,
         tabs = options.tabs,
         pane = options.pane,
+        styles = options.styles,
         activeTab = options.active;
 
     var onScroll = (node) => {
@@ -50,7 +51,7 @@ function Tabbed(options) {
 
 
     var html =
-      <div className={ 'tabbed ' + (options.className || '') }>
+      <div className={ 'tabbed ' + (options.className || '') } style={ styles }>
         <div className="tabs"
              scroll={ scrollTabs(TABS_OPTS, onScroll) } >
           <div className="scroll-tabs-button scroll-tabs-left">‹</div>

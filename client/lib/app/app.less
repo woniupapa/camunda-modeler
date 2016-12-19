@@ -33,6 +33,7 @@
 
   .panes {
     height: 100%;
+    margin: 5px;
 
     .flex-container(row);
     .flex-fill(initial);
@@ -49,7 +50,44 @@
         .flex-fill(1);
       }
     }
+
+    .pane {
+      margin: 0;
+    }
+    //
+    // .other.pane {
+    //   margin-left: 5px;
+    // }
+    //
+    // .main.pane {
+    //   margin-right: 5px;
+    // }
   }
+
+  .resize-panes {
+    .no-user-select;
+
+    // position: absolute;
+
+    cursor: ew-resize;
+    width: 10px;
+    background-color: @color-bpmnio;
+    opacity: 0.2;
+    margin-top: 40.8vh;
+    height: 10vh;
+    transition: opacity 150ms ease;
+
+    &:hover {
+      opacity: 0.8;
+    }
+
+    &:before {
+      content: '';
+      width: 5px;
+      display: block;
+    }
+  }
+
 
   .footer {
     .flex-fill(initial);

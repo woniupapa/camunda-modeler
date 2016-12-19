@@ -32,6 +32,8 @@ var ensureOpts = require('util/ensure-opts'),
     isUnsaved = require('util/file/is-unsaved'),
     parseFileType = require('./util/parse-file-type'),
     namespace = require('./util/namespace'),
+    dragger = require('util/dom/dragger'),
+    copy = require('util/copy'),
     fileDrop = require('./util/dom/file-drop');
 
 var debug = require('debug')('app');
@@ -59,6 +61,10 @@ function App(options) {
     propertiesPanel: {
       open: false,
       width: 250
+    },
+    panesLayout: {
+      width: 0,
+      type: 'min-width'
     },
     log: {
       open: false,
@@ -401,7 +407,12 @@ App.prototype.render = function() {
           active: '.active',
           ignore: '.empty'
         }
-      };
+      },
+      propertiesStyle = {
+        'min-width': '50%'
+      },
+      panesLayout = this.layout.panesLayout,
+      resizeHandle;
 
   if (this.otherPane) {
     otherPane = (
@@ -414,6 +425,16 @@ App.prototype.render = function() {
               onSelect={ this.compose('selectTab') }
               onContextMenu={ this.compose('openTabContextMenu') }
               onClose={ this.compose('closeTab') } />
+    );
+
+    propertiesStyle = {};
+
+    propertiesStyle[panesLayout.type] = panesLayout.width + 'px';
+
+    resizeHandle = (
+      <div className="resize-panes"
+           draggable="true"
+           onDragStart={ dragger(this.compose('resizePanes', copy(panesLayout))) }></div>
     );
   }
 
@@ -429,6 +450,7 @@ App.prototype.render = function() {
       <div className="panes">
         <Tabbed
           className="main pane"
+          styles={ propertiesStyle }
           tabs={ this.mainPane.tabs }
           active={ this.mainPane.activeTab }
           pane={ 'main' }
@@ -436,6 +458,7 @@ App.prototype.render = function() {
           onSelect={ this.compose('selectTab') }
           onContextMenu={ this.compose('openTabContextMenu') }
           onClose={ this.compose('closeTab') } />
+        { resizeHandle ? resizeHandle : undefined }
         { otherPane ? otherPane : undefined }
       </div>
       <Footer
@@ -445,6 +468,26 @@ App.prototype.render = function() {
     </div>;
 
   return html;
+};
+
+App.prototype.resizePanes = function onDrag(panelLayout, event, delta) {
+  var oldWidth = panelLayout.width,
+      halfPanesWidth = document.querySelector('.panes').scrollWidth / 2;
+
+  var newWidth = Math.max(oldWidth + delta.x, 0);
+
+  if ((newWidth > halfPanesWidth && newWidth < halfPanesWidth + 20) ||
+       newWidth < halfPanesWidth && newWidth > halfPanesWidth - 20) {
+
+    newWidth = halfPanesWidth;
+  }
+
+  this.emit('layout:update', {
+    panesLayout: {
+      width: newWidth,
+      type: newWidth > halfPanesWidth ? 'min-width' : 'max-width'
+    }
+  });
 };
 
 App.prototype.dragTab = function(context) {
@@ -477,7 +520,7 @@ App.prototype._initTabs = function(pane) {
 };
 
 App.prototype.toggleOtherPane = function() {
-  var tabs;
+  var tabs, config;
 
   if (!this.otherPane) {
     tabs = this._initTabs('other');
@@ -487,7 +530,14 @@ App.prototype.toggleOtherPane = function() {
       activeTab: tabs[0]
     };
 
-    this.events.emit('changed');
+    config = this.layout.panesLayout;
+
+    this.emit('layout:update', {
+      panesLayout: {
+        width: config.width !== 0 ? config.width : document.querySelector('.main.pane').scrollWidth,
+        type: config.type || 'min-width'
+      }
+    });
 
     return;
   }
@@ -517,7 +567,7 @@ App.prototype.toggleOtherPane = function() {
     this.selectTab(this.mainPane.tabs[0]);
   }
 
-  this.events.emit('changed');
+  this.emit('changed');
 };
 
 App.prototype.openTabContextMenu = function(tab, evt) {
